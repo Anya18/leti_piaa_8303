@@ -336,6 +336,8 @@ void Square::setConfiguration(){  //записываем нынешний вар
             iBestConfiguration[i][j] = iArray[i][j];
         }
     }
+//    std::cout << "Вариант лучшего расположения квадратов:" << std::endl;       // вывод частичных решений
+//    printConfiguration(std::cout);                                             // вывод частичных решений
 }
 
 
