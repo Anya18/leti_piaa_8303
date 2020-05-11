@@ -9,14 +9,14 @@ struct SquareList
     int* arr;
 };
 
-struct Coord
+struct Coord		// координаты на столешнице
 {
     int x;
     int y;
 };
 
 
-struct SquareData
+struct SquareData		// информация о квадрате 
 {
     Coord pos;  // координаты
     int w;   // размер квадрата
@@ -51,7 +51,7 @@ private:
 
 
 public:
-    Square(int iSize):
+    Square(int iSize):			// конструктор класса
         iSize(iSize)
     {
         iBestConfiguration = new int*[iSize];
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    void proceed();
+    void proceed();						
     int proceed(SquareList* list);
     int getSize() const;
     void setSquare(int x, int y, int w);
@@ -85,7 +85,7 @@ public:
 
 
 
-void Square::proceed(){
+void Square::proceed(){			// поиск решения, если пользователь не задал квадратов, которые необходимо установить на столешнице
     if(!optimize()){
         res = iSize*iSize;
         rec_backtrack(0);
@@ -94,9 +94,9 @@ void Square::proceed(){
 }
 
 
-int Square::proceed(SquareList* list){
+int Square::proceed(SquareList* list){  // поиск решения, если пользователь задал квадраты, которые необходимо установить на столешнице
     int find_flag = 0;
-    if(optimize()){
+    if(optimize()){				// проверка, включают ли в себя решения, найденные с помощью оптимизаций, необходимые квадраты
         for(int j = 0; j<list->count; j++){
             int flag = 0;
             for(int i = 1; i <= iColors; i++){
@@ -129,7 +129,7 @@ int Square::proceed(SquareList* list){
 
 //_____________OPTIMIZE____________________________________________
 
-int Square::optimize(){
+int Square::optimize(){				// выбор оптимизации
     if (iSize % 2 == 0){
         div2();
         setConfiguration();
@@ -148,14 +148,14 @@ int Square::optimize(){
     return 0;
 }
 
-void Square::div2(){
+void Square::div2(){					// оптимизация для столешниц с четной стороной	
     setSquare(0, 0, iSize/2);
     setSquare(iSize/2, 0, iSize/2);
     setSquare(0, iSize/2, iSize/2);
     setSquare(iSize/2, iSize/2, iSize/2);
 }
 
-void Square::div3(){
+void Square::div3(){					// оптимизация для столешниц со стороной кратной трём
     setSquare(0, 0, iSize/3*2);
     setSquare(iSize/3*2, 0, iSize/3);
     setSquare(iSize/3*2, iSize/3, iSize/3);
@@ -164,7 +164,7 @@ void Square::div3(){
     setSquare(iSize/3*2, iSize/3*2, iSize/3);
 }
 
-void Square::div5(){
+void Square::div5(){					// оптимизация для столешниц со стороной кратной пяти
     setSquare(0, 0, iSize/5*3);
     setSquare(iSize/5*3, 0, iSize/5*2);
     setSquare(iSize/5*3, iSize/5*2, iSize/5*2);
@@ -181,7 +181,7 @@ SquareData Square::findPotentialSquare() const{ //поск свободного 
     int x = -1;
     int y = -1;
     for(int i = 0; i < iSize; i++){
-        bool b = 0; // флаг для выхода из цикла
+        bool b = 0; 							// флаг для выхода из цикла
         for(int j = 0; j < iSize; j++){
             if(iArray[i][j] == 0){
                 y = i;
@@ -197,7 +197,7 @@ SquareData Square::findPotentialSquare() const{ //поск свободного 
     }
     int s;
     for(s = 0; s <= iSize - std::max(x, y); s++){
-        bool b = 0; // флаг для выхода из цикла
+        bool b = 0; 							// флаг для выхода из цикла
         for(int i = y; i < y+s; i++){
             if(iArray[i][x+s-1] != 0){
                 b = 1;
@@ -213,7 +213,7 @@ SquareData Square::findPotentialSquare() const{ //поск свободного 
         if(b) break;
     }
     s--;
-    return SquareData{Coord{x, y}, s}; // максимально возможный для вмещения квадрат
+    return SquareData{Coord{x, y}, s}; 			// максимально возможный для вмещения квадрат
 }
 
 
@@ -305,7 +305,7 @@ int Square::rec_backtrack(int iCurSize, SquareList* list){
         int w = emptySquare.w;
         while(w > 0){
             setSquare(emptySquare.pos.x, emptySquare.pos.y, w);  // записываем цифры в найденный квадрат
-            find_flag = rec_backtrack(iCurSize+1, list);
+            find_flag = rec_backtrack(iCurSize+1, list); 		// флаг показывает, что удалось найти хоть один вариант подходящего распложения квадратов
             if(find_flag == 1)
                 return find_flag;
             delSquare(emptySquare.pos.x, emptySquare.pos.y); // удаляем квадрат текущего этапа рекурсии
@@ -321,7 +321,7 @@ int Square::getSize() const {
     return iSize;
 }
 
-void Square::setSquare(int x, int y, int w){
+void Square::setSquare(int x, int y, int w){			// запись квадрата в массив для поиска лучшего расположения
     for(int i = y; i < y + w && i < iSize; i++){
         for(int j = x; j < x + w && j < iSize; j++){
             iArray[i][j] = iColors+1;
@@ -341,7 +341,7 @@ void Square::setConfiguration(){  //записываем нынешний вар
 }
 
 
-void Square::printConfiguration(std::ostream &os){
+void Square::printConfiguration(std::ostream &os){ 			// вовод лучшего расположения на экран
     os << iColors << std::endl;
     for(int i = 1; i <= iColors; i++){
         auto sq = findSquare_(i, iBestConfiguration);
@@ -349,8 +349,8 @@ void Square::printConfiguration(std::ostream &os){
     }
 }
 
-void Square::delSquare(int x, int y){
-    int color = iArray[y][x];
+void Square::delSquare(int x, int y){ 			// удаление квадрата со столешницы
+    int color = iArray[y][x];					// определение цвета квадрата, который необходимо удалить со столешницы
     for(int i = y; i < iSize; i++){
         for(int j = x; j < iSize; j++){
             if(iArray[i][j] == color)
@@ -358,7 +358,7 @@ void Square::delSquare(int x, int y){
             else break;
         }
     }
-    for(int i = 0; i < iSize; i++){
+    for(int i = 0; i < iSize; i++){				// уменьшение номера цвета, если он больше  удалённого
         for(int j = 0; j < iSize; j++){
             if(iArray[i][j] > color)
                 iArray[i][j]--;
@@ -369,7 +369,7 @@ void Square::delSquare(int x, int y){
 
 
 
-void read_sizes(int size, SquareList *list){
+void read_sizes(int size, SquareList *list){   		// чтение квадратов, которые пользователь хочет разместить на доске
     std::cout << "Введите количество квадратов, которые необходимо разместить:" << std::endl;
     std::cin >> list->count;
     if(list->count <= 0)
